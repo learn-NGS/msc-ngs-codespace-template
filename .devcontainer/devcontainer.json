@@ -1,0 +1,20 @@
+{
+  "name": "MSc NGS Bioinformatics",
+
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+
+  "postCreateCommand": "mkdir -p /workspaces/variantcalling && ln -sfn /workspaces/variantcalling /home/vscode/variantcalling",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-toolsai.jupyter"
+      ]
+    }
+  },
+
+  "remoteUser": "vscode"
+}
