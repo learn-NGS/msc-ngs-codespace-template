@@ -7,10 +7,11 @@ RUN apt-get update && \
     wget \
     curl \
     bzip2 \
-    ca-certificates && \
+    ca-certificates \
+    git-lfs && \
     rm -rf /var/lib/apt/lists/*
 
-# Install Miniforge (includes conda + mamba)
+# Install Miniforge (conda + mamba)
 RUN wget -q \
     https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh \
     -O /tmp/miniforge.sh && \
@@ -24,6 +25,16 @@ ENV MAMBA_ROOT_PREFIX="/opt/miniforge3"
 
 USER vscode
 
-# Initialize mamba for the vscode user's Bash shell
-RUN /opt/miniforge3/bin/mamba shell init -s bash -r /opt/miniforge3 && \
+# Initialize Mamba
+RUN /opt/miniforge3/bin/mamba shell init \
+    -s bash \
+    -r /opt/miniforge3 && \
     /opt/miniforge3/bin/conda config --set auto_activate_base false
+
+# Copy the NGS environment definition
+COPY --chown=vscode:vscode gvar.yml /tmp/gvar.yml
+
+# Preinstall germline variant-calling environment
+RUN /opt/miniforge3/bin/mamba env create \
+    -f /tmp/gvar.yml && \
+    /opt/miniforge3/bin/conda clean -afy
